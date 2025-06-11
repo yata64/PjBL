@@ -5,10 +5,10 @@ public class Quarto{
     private float diaria;
 
     public enum ocupacao{
-        ocupado, 
-        livre,
-        limpeza,
-        manutencao
+        OCUPADO, 
+        LIVRE,
+        LIMPEZA,
+        MANUTENCAO
 
     }
 

@@ -50,7 +50,7 @@ public class Hotel{
     public ArrayList<Quarto> quartos_livres(){
         ArrayList<Quarto> livres = new ArrayList<>();
         for (Quarto q : quartos){
-            if (q.get_ocupacao() == Quarto.ocupacao.livre){
+            if (q.get_ocupacao() == Quarto.ocupacao.LIVRE){
                 livres.add(q);
             }
         }
