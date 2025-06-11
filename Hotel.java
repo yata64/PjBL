@@ -43,6 +43,7 @@ public class Hotel{
                 return q;
             }
         }
+        System.out.println("Nenhum quarto encontrado com esse número " + numero);
         return null;
     }
 
