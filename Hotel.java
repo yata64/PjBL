@@ -94,7 +94,8 @@ public class Hotel{
         out.writeObject(reservas);
         out.close();
     }
-
+    
+    @SuppressWarnings("unchecked")
     public void carregar_reservas(String arquivo) throws Exception{
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(arquivo));
         reservas = (ArrayList<Reserva>) in .readObject();
