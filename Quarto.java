@@ -23,6 +23,10 @@ public class Quarto{
 
     }
 
+    public void set_ocupacao(ocupacao nova){
+        this.ocupacao = nova;
+    }
+
     public int get_numero(){
         return numero;
     }
