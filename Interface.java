@@ -161,8 +161,7 @@ public class Interface extends JFrame {
             Quarto q = hotel.buscar_quarto(numero);
             if (q != null && q.get_ocupacao() == Quarto.ocupacao.LIVRE){
                 q.set_ocupacao(Quarto.ocupacao.OCUPADO);
-                Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(),
-                    clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
+                Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(),clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
                 hotel.add_reserva(r);
                 JOptionPane.showMessageDialog(this, "Reserva feita para " + clienteSelecionado.get_nome() + " no quarto " + numero);
             }
