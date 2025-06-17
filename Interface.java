@@ -11,33 +11,27 @@ public class Interface extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // 15 quartos simples - livres
         for (int i = 1; i <= 15; i++){
         hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIVRE));
         }
 
-        // 15 quartos suíte - livres
-        for (int i = 16; i <= 30; i++) {
+        for (int i = 16; i <= 30; i++){
             hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIVRE));
         }
 
-        // 5 quartos simples - manutenção
-        for (int i = 31; i <= 35; i++) {
+        for (int i = 31; i <= 35; i++){
             hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.MANUTENCAO));
         }
 
-        // 5 quartos simples - limpeza
-        for (int i = 36; i <= 40; i++) {
+        for (int i = 36; i <= 40; i++){
             hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIMPEZA));
         }
 
-        // 5 quartos suíte - manutenção
-        for (int i = 41; i <= 45; i++) {
+        for (int i = 41; i <= 45; i++){
             hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.MANUTENCAO));
         }
 
-        // 5 quartos suíte - limpeza
-        for (int i = 46; i <= 50; i++) {
+        for (int i = 46; i <= 50; i++){
             hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIMPEZA));
         }
 
@@ -79,10 +73,11 @@ public class Interface extends JFrame {
         setVisible(true);
     }
 
-    private void cadastrarCliente() {
+    private void cadastrarCliente(){
         String nome = JOptionPane.showInputDialog("Nome do cliente:");
         String cpf = JOptionPane.showInputDialog("CPF:");
         String email = JOptionPane.showInputDialog("Email:");
+
         if (nome != null && cpf != null && email != null && !nome.isEmpty()) {
             Cliente c = new Cliente(nome, cpf, email);
             hotel.add_cliente(c); 
@@ -91,35 +86,37 @@ public class Interface extends JFrame {
     }
 
 
-    private void cadastrarFuncionario() {
+    private void cadastrarFuncionario(){
         String nome = JOptionPane.showInputDialog("Nome do funcionário:");
         String cpf = JOptionPane.showInputDialog("CPF:");
         String cargo = JOptionPane.showInputDialog("Cargo:");
         String salarioStr = JOptionPane.showInputDialog("Salário:");
-        try {
+
+        try{
             float salario = Float.parseFloat(salarioStr);
             Funcionario f = new Funcionario(nome, cpf, cargo, salario);
             hotel.add_funcionario(f);
             JOptionPane.showMessageDialog(this, "Funcionário cadastrado.");
-        } catch (Exception e) {
+        } 
+        catch (Exception e){
             JOptionPane.showMessageDialog(this, "Erro ao cadastrar funcionário.");
         }
     }
 
-    private void listarPessoas() {
+    private void listarPessoas(){
         StringBuilder sb = new StringBuilder();
 
-        for (Pessoa p : hotel.get_pessoas()) {
+        for (Pessoa p : hotel.get_pessoas()){
             p.exibir_informacoes();
 
             sb.append(p.get_nome()).append(" - CPF: ").append(p.get_cpf());
 
-            if (p instanceof Cliente) {
+            if (p instanceof Cliente){
             Cliente c = (Cliente) p;
             sb.append(" - Email: ").append(c.get_email());
             }
 
-            else if (p instanceof Funcionario) {
+            else if (p instanceof Funcionario){
                 Funcionario f = (Funcionario) p;
                 sb.append(" - Cargo: ").append(f.get_cargo());
             }
@@ -130,50 +127,52 @@ public class Interface extends JFrame {
     }
 
     private void adicionarReserva() {
-        if (hotel.get_clientes().isEmpty()) {
+        if (hotel.get_clientes().isEmpty()){
             JOptionPane.showMessageDialog(this, "Cadastre pelo menos um cliente antes de fazer a reserva.");
             return;
     }
 
         StringBuilder quartosLivres = new StringBuilder("Quartos Livres:\n");
-        for (Quarto q : hotel.quartos_livres()) {
+        for (Quarto q : hotel.quartos_livres()){
             quartosLivres.append("Quarto ").append(q.get_numero()).append("\n");
         }
 
-        if (quartosLivres.length() == 0) {
+        if (quartosLivres.length() == 0){
             JOptionPane.showMessageDialog(this, "Sem quartos disponíveis.");
             return;
         }
 
         String[] nomesClientes = hotel.get_clientes().stream().map(Cliente::get_nome).toArray(String[]::new);
-        String nomeSelecionado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente:","Clientes", JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
+        String nomeSelecionado = (String)JOptionPane.showInputDialog(this, "Selecione o cliente:","Clientes", JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
 
         if (nomeSelecionado == null) 
             return;
 
             Cliente clienteSelecionado = hotel.get_clientes().stream().filter(c -> c.get_nome().equals(nomeSelecionado)).findFirst().orElse(null);
 
-        if (clienteSelecionado == null) {
+        if (clienteSelecionado == null){
             JOptionPane.showMessageDialog(this, "Cliente não encontrado.");
             return;
         }
 
         String numStr = JOptionPane.showInputDialog(this, quartosLivres + "\nDigite o número do quarto para reservar:");
-        try {
+        try{
             int numero = Integer.parseInt(numStr);
             Quarto q = hotel.buscar_quarto(numero);
-            if (q != null && q.get_ocupacao() == Quarto.ocupacao.LIVRE) {
+            if (q != null && q.get_ocupacao() == Quarto.ocupacao.LIVRE){
                 q.set_ocupacao(Quarto.ocupacao.OCUPADO);
                 Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(),
                     clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
                 hotel.add_reserva(r);
                 JOptionPane.showMessageDialog(this, "Reserva feita para " + clienteSelecionado.get_nome() + " no quarto " + numero);
-            } 
+            }
+
             else{
                 JOptionPane.showMessageDialog(this, "Quarto inválido ou já ocupado.");
             }
         } 
-        catch (NumberFormatException e) {
+
+        catch (NumberFormatException e){
             JOptionPane.showMessageDialog(this, "Entrada inválida.");
         }
     }
@@ -182,7 +181,7 @@ public class Interface extends JFrame {
     private void verQuartos(){
         StringBuilder sb = new StringBuilder();
 
-        for (Quarto.ocupacao estado : Quarto.ocupacao.values()) {
+        for (Quarto.ocupacao estado : Quarto.ocupacao.values()){
             sb.append("Quartos em ").append(estado.name()).append(":\n");
             for (Quarto q : hotel.get_quartos()){
                 if (q.get_ocupacao() == estado){
@@ -196,7 +195,7 @@ public class Interface extends JFrame {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         new Interface();
     }
 }
