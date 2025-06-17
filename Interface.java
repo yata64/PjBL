@@ -1,48 +1,55 @@
 import javax.swing.*;
+import java.awt.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 public class Interface extends JFrame {
     private Hotel hotel = new Hotel("Hotel Central", "Av. Principal, 120");
-    private ArrayList<Cliente> clientes = new ArrayList<>();
-    private ArrayList<Funcionario> funcionarios = new ArrayList<>();
 
     public Interface() {
-        setTitle("Sistema de Reservas de Hotel");
-        setSize(600, 500);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(null);
+        setTitle("Sistema de Reservas");
+        setSize(500, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JButton btnCliente = new JButton("Cadastrar Cliente");
-        btnCliente.setBounds(20, 20, 200, 30);
-        btnCliente.addActionListener(e -> cadastrarCliente());
-        add(btnCliente);
+        // Criar 50 quartos livres
+        for (int i = 1; i <= 50; i++) {
+            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIVRE));
+        }
 
-        JButton btnFuncionario = new JButton("Cadastrar Funcionário");
-        btnFuncionario.setBounds(20, 60, 200, 30);
-        btnFuncionario.addActionListener(e -> cadastrarFuncionario());
-        add(btnFuncionario);
+        JPanel painel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 0, 8, 0);
+        gbc.gridx = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JButton btnListarClientes = new JButton("Listar Clientes");
-        btnListarClientes.setBounds(20, 100, 200, 30);
-        btnListarClientes.addActionListener(e -> listarClientes());
-        add(btnListarClientes);
+        JPanel botoes = new JPanel(new GridLayout(0, 1, 10, 10));
 
-        JButton btnListarFuncionarios = new JButton("Listar Funcionários");
-        btnListarFuncionarios.setBounds(20, 140, 200, 30);
-        btnListarFuncionarios.addActionListener(e -> listarFuncionarios());
-        add(btnListarFuncionarios);
+        JButton btnCadastrarCliente = new JButton("Cadastrar Cliente");
+        btnCadastrarCliente.addActionListener(e -> cadastrarCliente());
+        botoes.add(btnCadastrarCliente);
 
-        JButton btnReservar = new JButton("Adicionar Reserva");
-        btnReservar.setBounds(20, 180, 200, 30);
-        btnReservar.addActionListener(e -> adicionarReserva());
-        add(btnReservar);
+        JButton btnCadastrarFuncionario = new JButton("Cadastrar Funcionário");
+        btnCadastrarFuncionario.addActionListener(e -> cadastrarFuncionario());
+        botoes.add(btnCadastrarFuncionario);
 
-        JButton btnQuartos = new JButton("Ver Ocupação dos Quartos");
-        btnQuartos.setBounds(20, 220, 200, 30);
-        btnQuartos.addActionListener(e -> mostrarOcupacao());
-        add(btnQuartos);
+        JButton btnListarTodos = new JButton("Listar Clientes e Funcionários");
+        btnListarTodos.addActionListener(e -> listarPessoas());
+        botoes.add(btnListarTodos);
 
+        JButton btnAdicionarReserva = new JButton("Adicionar Reserva");
+        btnAdicionarReserva.addActionListener(e -> adicionarReserva());
+        botoes.add(btnAdicionarReserva);
+
+        JButton btnVerQuartos = new JButton("Ver Quartos e Ocupação");
+        btnVerQuartos.addActionListener(e -> verQuartos());
+        botoes.add(btnVerQuartos);
+
+        JButton btnSair = new JButton("Sair");
+        btnSair.addActionListener(e -> System.exit(0));
+        botoes.add(btnSair);
+
+        painel.add(botoes, gbc);
+        add(painel);
         setVisible(true);
     }
 
@@ -50,66 +57,111 @@ public class Interface extends JFrame {
         String nome = JOptionPane.showInputDialog("Nome do cliente:");
         String cpf = JOptionPane.showInputDialog("CPF:");
         String email = JOptionPane.showInputDialog("Email:");
-        Cliente c = new Cliente(nome, cpf, email);
-        clientes.add(c);
-        JOptionPane.showMessageDialog(this, "Cliente cadastrado!");
+        if (nome != null && cpf != null && email != null && !nome.isEmpty()) {
+            Cliente c = new Cliente(nome, cpf, email);
+            hotel.add_cliente(c); // ✅ Adiciona o cliente ao hotel
+            JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso.");
+        }
     }
+
 
     private void cadastrarFuncionario() {
         String nome = JOptionPane.showInputDialog("Nome do funcionário:");
         String cpf = JOptionPane.showInputDialog("CPF:");
         String cargo = JOptionPane.showInputDialog("Cargo:");
-        float salario = Float.parseFloat(JOptionPane.showInputDialog("Salário:"));
-        Funcionario f = new Funcionario(nome, cpf, cargo, salario);
-        funcionarios.add(f);
-        hotel.add_funcionario(f);
-        JOptionPane.showMessageDialog(this, "Funcionário cadastrado!");
-    }
-
-    private void listarClientes() {
-        StringBuilder sb = new StringBuilder();
-        for (Cliente c : clientes) {
-            sb.append(c.get_nome()).append(" - ").append(c.get_email()).append("\n");
+        String salarioStr = JOptionPane.showInputDialog("Salário:");
+        try {
+            float salario = Float.parseFloat(salarioStr);
+            Funcionario f = new Funcionario(nome, cpf, cargo, salario);
+            hotel.add_funcionario(f);
+            JOptionPane.showMessageDialog(this, "Funcionário cadastrado.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar funcionário.");
         }
-        JOptionPane.showMessageDialog(this, sb.length() > 0 ? sb.toString() : "Nenhum cliente cadastrado.");
     }
 
-    private void listarFuncionarios() {
+    private void listarPessoas() {
         StringBuilder sb = new StringBuilder();
-        for (Funcionario f : funcionarios) {
+        sb.append("Funcionários:\n");
+        for (Funcionario f : hotel.get_funcionarios()){
             sb.append(f.get_nome()).append(" - ").append(f.get_cargo()).append("\n");
         }
-        JOptionPane.showMessageDialog(this, sb.length() > 0 ? sb.toString() : "Nenhum funcionário cadastrado.");
+        sb.append("Clientes: \n");
+        for (Cliente f : hotel.get_clientes()){
+            sb.append(f.get_nome()).append(" - ").append(f.get_cpf()).append(" - ").append(f.get_email()).append("\n");
+        }
+        JOptionPane.showMessageDialog(this, sb.toString());
+    }
+    private void adicionarReserva() {
+    // Verificar se há clientes cadastrados
+        if (hotel.get_clientes().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Cadastre pelo menos um cliente antes de fazer a reserva.");
+            return;
     }
 
-    private void adicionarReserva() {
-        if (clientes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Nenhum cliente cadastrado.");
+    // Verificar se há quartos livres
+        StringBuilder quartosLivres = new StringBuilder("Quartos Livres:\n");
+        for (Quarto q : hotel.quartos_livres()) {
+            quartosLivres.append("Quarto ").append(q.get_numero()).append("\n");
+        }
+
+        if (quartosLivres.length() == 0) {
+            JOptionPane.showMessageDialog(this, "Sem quartos disponíveis.");
             return;
         }
+
+    // Selecionar cliente
+        String[] nomesClientes = hotel.get_clientes().stream().map(Cliente::get_nome).toArray(String[]::new);
+        String nomeSelecionado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente:","Clientes", JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
+
+        if (nomeSelecionado == null) 
+            return;
+
+            Cliente clienteSelecionado = hotel.get_clientes().stream().filter(c -> c.get_nome().equals(nomeSelecionado)).findFirst().orElse(null);
+
+        if (clienteSelecionado == null) {
+            JOptionPane.showMessageDialog(this, "Cliente não encontrado.");
+            return;
+        }
+
+    // Selecionar quarto
+        String numStr = JOptionPane.showInputDialog(this, quartosLivres + "\nDigite o número do quarto para reservar:");
         try {
-            int num = Integer.parseInt(JOptionPane.showInputDialog("Número da reserva:"));
-            String tipo = JOptionPane.showInputDialog("Tipo da reserva:");
-            float preco = Float.parseFloat(JOptionPane.showInputDialog("Preço da reserva:"));
-            Cliente cliente = clientes.get(0); // exemplo usa o primeiro cliente
-            LocalDate entrada = LocalDate.now();
-            LocalDate saida = entrada.plusDays(3);
-            Reserva r = new Reserva(num, tipo, preco, cliente.get_nome(), entrada, saida);
-            hotel.add_reserva(r);
-            JOptionPane.showMessageDialog(this, "Reserva adicionada!");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao adicionar reserva.");
+            int numero = Integer.parseInt(numStr);
+            Quarto q = hotel.buscar_quarto(numero);
+            if (q != null && q.get_ocupacao() == Quarto.ocupacao.LIVRE) {
+                q.set_ocupacao(Quarto.ocupacao.OCUPADO);
+                Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(),
+                    clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
+                hotel.add_reserva(r);
+                JOptionPane.showMessageDialog(this, "Reserva feita para " + clienteSelecionado.get_nome() + " no quarto " + numero);
+            } 
+            else{
+                JOptionPane.showMessageDialog(this, "Quarto inválido ou já ocupado.");
+            }
+        } 
+        catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Entrada inválida.");
         }
     }
 
-    private void mostrarOcupacao() {
-        StringBuilder sb = new StringBuilder();
+
+    private void verQuartos() {
+        StringBuilder sb = new StringBuilder("Quartos Ocupados:\n");
         for (Quarto q : hotel.get_quartos()) {
-            sb.append("Quarto ").append(q.get_numero())
-              .append(" - Ocupação: ").append(q.get_ocupacao())
-              .append("\n");
+            if (q.get_ocupacao() == Quarto.ocupacao.OCUPADO) {
+                sb.append("Quarto ").append(q.get_numero()).append(" - ").append(q.get_tipo()).append("\n");
+            }
         }
-        JOptionPane.showMessageDialog(this, sb.length() > 0 ? sb.toString() : "Nenhum quarto carregado.");
+
+        sb.append("\nQuartos Livres:\n");
+        for (Quarto q : hotel.get_quartos()) {
+            if (q.get_ocupacao() == Quarto.ocupacao.LIVRE) {
+                sb.append("Quarto ").append(q.get_numero()).append(" - ").append(q.get_tipo()).append("\n");
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, sb.toString());
     }
 
     public static void main(String[] args) {
