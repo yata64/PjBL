@@ -85,7 +85,7 @@ public class Interface extends JFrame {
         String email = JOptionPane.showInputDialog("Email:");
         if (nome != null && cpf != null && email != null && !nome.isEmpty()) {
             Cliente c = new Cliente(nome, cpf, email);
-            hotel.add_cliente(c); // ✅ Adiciona o cliente ao hotel
+            hotel.add_cliente(c); 
             JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso.");
         }
     }
@@ -110,7 +110,7 @@ public class Interface extends JFrame {
         StringBuilder sb = new StringBuilder();
 
         for (Pessoa p : hotel.get_pessoas()) {
-            p.exibir_informacoes(); // chamada polimórfica
+            p.exibir_informacoes();
 
             sb.append(p.get_nome()).append(" - CPF: ").append(p.get_cpf());
 
@@ -130,13 +130,11 @@ public class Interface extends JFrame {
     }
 
     private void adicionarReserva() {
-    // Verificar se há clientes cadastrados
         if (hotel.get_clientes().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Cadastre pelo menos um cliente antes de fazer a reserva.");
             return;
     }
 
-    // Verificar se há quartos livres
         StringBuilder quartosLivres = new StringBuilder("Quartos Livres:\n");
         for (Quarto q : hotel.quartos_livres()) {
             quartosLivres.append("Quarto ").append(q.get_numero()).append("\n");
@@ -147,7 +145,6 @@ public class Interface extends JFrame {
             return;
         }
 
-    // Selecionar cliente
         String[] nomesClientes = hotel.get_clientes().stream().map(Cliente::get_nome).toArray(String[]::new);
         String nomeSelecionado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente:","Clientes", JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
 
@@ -161,7 +158,6 @@ public class Interface extends JFrame {
             return;
         }
 
-    // Selecionar quarto
         String numStr = JOptionPane.showInputDialog(this, quartosLivres + "\nDigite o número do quarto para reservar:");
         try {
             int numero = Integer.parseInt(numStr);
