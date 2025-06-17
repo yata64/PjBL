@@ -3,16 +3,14 @@ public class Quarto{
     private String tipo;
     private int capacidade;
     private float diaria;
+    private ocupacao ocupacao;
 
     public enum ocupacao{
         OCUPADO, 
         LIVRE,
         LIMPEZA,
         MANUTENCAO
-
     }
-
-    private ocupacao ocupacao;
 
     public Quarto(int numero, String tipo, int capacidade, float diaria, ocupacao ocupacao){
         this.numero = numero;

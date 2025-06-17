@@ -11,10 +11,36 @@ public class Interface extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Criar 50 quartos livres
-        for (int i = 1; i <= 50; i++) {
-            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIVRE));
+        // 15 quartos simples - livres
+        for (int i = 1; i <= 15; i++){
+        hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIVRE));
         }
+
+        // 15 quartos suíte - livres
+        for (int i = 16; i <= 30; i++) {
+            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIVRE));
+        }
+
+        // 5 quartos simples - manutenção
+        for (int i = 31; i <= 35; i++) {
+            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.MANUTENCAO));
+        }
+
+        // 5 quartos simples - limpeza
+        for (int i = 36; i <= 40; i++) {
+            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIMPEZA));
+        }
+
+        // 5 quartos suíte - manutenção
+        for (int i = 41; i <= 45; i++) {
+            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.MANUTENCAO));
+        }
+
+        // 5 quartos suíte - limpeza
+        for (int i = 46; i <= 50; i++) {
+            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIMPEZA));
+        }
+
 
         JPanel painel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -82,16 +108,27 @@ public class Interface extends JFrame {
 
     private void listarPessoas() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Funcionários:\n");
-        for (Funcionario f : hotel.get_funcionarios()){
-            sb.append(f.get_nome()).append(" - ").append(f.get_cargo()).append("\n");
+
+        for (Pessoa p : hotel.get_pessoas()) {
+            p.exibir_informacoes(); // chamada polimórfica
+
+            sb.append(p.get_nome()).append(" - CPF: ").append(p.get_cpf());
+
+            if (p instanceof Cliente) {
+            Cliente c = (Cliente) p;
+            sb.append(" - Email: ").append(c.get_email());
+            }
+
+            else if (p instanceof Funcionario) {
+                Funcionario f = (Funcionario) p;
+                sb.append(" - Cargo: ").append(f.get_cargo());
+            }
+
+            sb.append("\n");
         }
-        sb.append("Clientes: \n");
-        for (Cliente f : hotel.get_clientes()){
-            sb.append(f.get_nome()).append(" - ").append(f.get_cpf()).append(" - ").append(f.get_email()).append("\n");
-        }
-        JOptionPane.showMessageDialog(this, sb.toString());
+        JOptionPane.showMessageDialog(this, sb.toString()); 
     }
+
     private void adicionarReserva() {
     // Verificar se há clientes cadastrados
         if (hotel.get_clientes().isEmpty()) {
@@ -146,23 +183,22 @@ public class Interface extends JFrame {
     }
 
 
-    private void verQuartos() {
-        StringBuilder sb = new StringBuilder("Quartos Ocupados:\n");
-        for (Quarto q : hotel.get_quartos()) {
-            if (q.get_ocupacao() == Quarto.ocupacao.OCUPADO) {
-                sb.append("Quarto ").append(q.get_numero()).append(" - ").append(q.get_tipo()).append("\n");
-            }
-        }
+    private void verQuartos(){
+        StringBuilder sb = new StringBuilder();
 
-        sb.append("\nQuartos Livres:\n");
-        for (Quarto q : hotel.get_quartos()) {
-            if (q.get_ocupacao() == Quarto.ocupacao.LIVRE) {
-                sb.append("Quarto ").append(q.get_numero()).append(" - ").append(q.get_tipo()).append("\n");
+        for (Quarto.ocupacao estado : Quarto.ocupacao.values()) {
+            sb.append("Quartos em ").append(estado.name()).append(":\n");
+            for (Quarto q : hotel.get_quartos()){
+                if (q.get_ocupacao() == estado){
+                    sb.append("Quarto ").append(q.get_numero()).append(" - Tipo: ").append(q.get_tipo()).append(" - Capacidade: ").append(q.get_capacidade()).append(" - Diária: R$ ").append(q.get_diaria()).append("\n");
+                }
             }
+            sb.append("\n");
         }
 
         JOptionPane.showMessageDialog(this, sb.toString());
     }
+
 
     public static void main(String[] args) {
         new Interface();

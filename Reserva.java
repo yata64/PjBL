@@ -1,7 +1,6 @@
 import java.time.LocalDate;
-import java.io.Serializable;
 
-public class Reserva implements Serializable{
+public class Reserva{
     private int numero;
     private String tipo;
     private float preco;
