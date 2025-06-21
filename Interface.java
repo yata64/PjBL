@@ -75,6 +75,11 @@ public class Interface extends JFrame {
         btnVerQuartos.addActionListener(e -> verQuartos());
         botoes.add(btnVerQuartos);
 
+        JButton btnCarregarClientes = new JButton("Carregar Clientes");
+        btnCarregarClientes.addActionListener(e -> carregarClientes());
+        botoes.add(btnCarregarClientes);
+
+
         JButton btnSair = new JButton("Sair");
         btnSair.addActionListener(e -> System.exit(0));
         botoes.add(btnSair);
@@ -233,7 +238,9 @@ public class Interface extends JFrame {
         JOptionPane.showMessageDialog(this, sb.toString());
     }
 
-    private void carregarClientes(String caminho){
+    private void carregarClientes(){
+        String caminho = "clientes.csv";
+
         try (BufferedReader br = new BufferedReader(new FileReader(caminho))){
             String linha;
 
