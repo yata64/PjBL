@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
@@ -75,9 +77,9 @@ public class Interface extends JFrame {
         btnVerQuartos.addActionListener(e -> verQuartos());
         botoes.add(btnVerQuartos);
 
-        JButton btnCarregarClientes = new JButton("Carregar Clientes");
-        btnCarregarClientes.addActionListener(e -> carregarClientes());
-        botoes.add(btnCarregarClientes);
+        JButton btnSalvarDados = new JButton("Salvar dados");
+        btnSalvarDados.addActionListener(e -> salvarDados());
+        botoes.add(btnSalvarDados);
 
 
         JButton btnSair = new JButton("Sair");
@@ -262,6 +264,161 @@ public class Interface extends JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao carregar clientes..." + e.getMessage());
         }
     }
+
+    private void carregarFuncionarios(){
+        String caminho = "funcionarios.csv";
+
+        try(BufferedReader br = new BufferedReader(new FileReader(caminho))){
+            String linha;
+
+            while ((linha = br.readLine()) != null){
+                String[] partes = linha.split(";");
+
+                if (partes.length == 4){
+                    String nome = partes[0];
+                    String cpf = partes[1];
+                    String cargo = partes[2];
+                    float salario = Float.parseFloat(partes[3]);
+
+                    Funcionario f = new Funcionario(nome, cpf, cargo, salario);
+                    hotel.add_funcionario(f);
+                }
+            }
+        }
+
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar funcionario..." + e.getMessage());
+        }
+    }
+
+    private void carregarQuartos(){
+        String caminho = "quartos.csv";
+
+        try(BufferedReader br = new BufferedReader(new FileReader(caminho))){
+            String linha;
+
+            while((linha = br.readLine()) != null){
+                String[] partes = linha.split(";");
+                
+                if (partes.length == 5){
+                    int numero = Integer.parseInt(partes[0]);
+                    String tipo = partes[1];
+                    int capacidade = Integer.parseInt(partes[2]);
+                    float diaria = Float.parseFloat(partes[3]);
+                    Quarto.ocupacao ocupacao = Quarto.ocupacao.valueOf(partes[4]);
+
+                    Quarto q = new Quarto(numero, tipo, capacidade, diaria, ocupacao);
+                    hotel.add_quarto(q);
+                }
+            }
+        }
+
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar quarto..." + e.getMessage());
+        }
+    }
+
+    private void carregarReservas(){
+        String caminho = "reservas.csv";
+
+        try(BufferedReader br = new BufferedReader(new FileReader(caminho))){
+            String linha;
+
+            while((linha = br.readLine()) != null){
+                String[] partes = linha.split(";");
+
+                if(partes.length == 7){
+                    int numero = Integer.parseInt(partes[0]);
+                    String tipo = partes[1];
+                    float preco = Float.parseFloat(partes[2]);
+                    String cliente = partes[4];
+                    LocalDate dataEntrada = LocalDate.parse(partes[5]);
+                    LocalDate dataSaida = LocalDate.parse(partes[6]);
+
+                    Reserva r = new Reserva(numero, tipo, preco, cliente, dataEntrada, dataSaida);
+                    hotel.add_reserva(r);
+                }
+            }
+        }
+        
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar..." + e.getMessage());
+        }
+    }
+
+    private void salvarClientes(String caminho){
+
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))){
+
+            for (Cliente c : hotel.get_clientes()){
+                String linha = c.get_nome() + ";" + c.get_cpf() + ";" + c.get_email();
+                bw.write(linha);
+                bw.newLine();
+            }
+        }
+
+        catch(IOException e){
+        JOptionPane.showMessageDialog(this, "Erro ao salvar clientes..." + e.getMessage());
+        }
+    }
+
+    private void salvarFuncionarios(String caminho){
+
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))){
+
+            for (Funcionario f : hotel.get_funcionarios()){
+                String linha = f.get_nome() + ";" + f.get_cpf() + ";" + f.get_cargo() + ";" + f.get_salario();
+                bw.write(linha);
+                bw.newLine();
+            }
+        }
+
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao salvar Funcionarios..." + e.getMessage());
+        }
+    }
+
+    private void salvarQuartos(String caminho){
+
+        try(BufferedWriter br = new BufferedWriter(new FileWriter(caminho))){
+
+            for (Quarto q : hotel.get_quartos()){
+                String linha = q.get_numero() + ";" + q.get_tipo() + ";" + q.get_capacidade() + ";" + q.get_diaria() + ";" + q.get_ocupacao();
+                br.write(linha);
+                br.newLine();
+            }
+        }
+        
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao salvar quarto..." + e.getMessage());
+        }
+    }
+
+    private void salvarReservas(String caminho){
+
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(caminho))){
+
+            for(Reserva r : hotel.get_reservas()){
+                String linha = r.get_numero() + ";" + r.get_tipo() + ";" + r.get_preco() + ";" + r.get_cliente() + ";" + r.get_entrada() + ";" + r.get_saida();
+                bw.write(linha);
+                bw.newLine();
+            }
+        }
+
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar reserva..." + e.getMessage());
+        }
+    }
+
+    private void salvarDados(){
+        salvarClientes("clientes.csv");
+        salvarFuncionarios("funcionarios.csv");
+        salvarQuartos("quartos.csv");
+        salvarReservas("reservas.csv");
+
+        JOptionPane.showMessageDialog(this, "Todos os dados salvos com sucesso");
+    }
+
 
     public static void main(String[] args){
         new Interface();
