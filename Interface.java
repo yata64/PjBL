@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 public class Interface extends JFrame {
     private Hotel hotel = new Hotel("Hotel Central", "Av. Principal, 120");
@@ -61,7 +58,11 @@ public class Interface extends JFrame {
 
         JButton btnListarFuncionarios = new JButton("Listar Funcionários");
         btnListarFuncionarios.addActionListener(e -> ListarFuncionarios());
-        botoes.add(btnListarFuncionarios);
+        botoes.add(btnListarFuncionarios);  
+
+        JButton btnMudarOcupacao = new JButton("Mudar Ocupação do Quarto: ");
+        btnMudarOcupacao.addActionListener(e -> MudarOcupacao());
+        botoes.add(btnMudarOcupacao);
 
         JButton btnAdicionarReserva = new JButton("Adicionar Reserva");
         btnAdicionarReserva.addActionListener(e -> adicionarReserva());
@@ -130,6 +131,36 @@ public class Interface extends JFrame {
         
         }
         JOptionPane.showMessageDialog(this, ListaFuncionarios.toString());
+    }
+
+    private void MudarOcupacao(){
+        String nquarto = JOptionPane.showInputDialog(this, "Digite o número do quarto: ");
+        if (nquarto == null){
+            return;
+        }
+
+        try{
+            int numero = Integer.parseInt(nquarto);
+            Quarto quarto = hotel.buscar_quarto(numero);
+
+            if (quarto == null){
+                JOptionPane.showMessageDialog(this, "Quarto não encontrado... ");
+                return;
+            }
+        
+
+            Quarto.ocupacao[] opcoes = Quarto.ocupacao.values();
+            Quarto.ocupacao novaOcupacao = (Quarto.ocupacao) JOptionPane.showInputDialog(this,"Escolha a nova ocupação para o quarto " + numero + ":","Alterar Ocupação",JOptionPane.QUESTION_MESSAGE,null,opcoes,quarto.get_ocupacao());
+        
+            if (novaOcupacao != null){
+                quarto.set_ocupacao(novaOcupacao);
+                JOptionPane.showMessageDialog(this, "Alterado com sucesso! ");
+            }
+        }
+
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this, "Número inválido ");
+        }        
     }
 
     private void adicionarReserva() {
