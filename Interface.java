@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDate;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 public class Interface extends JFrame {
     private Hotel hotel = new Hotel("Hotel Central", "Av. Principal, 120");
@@ -52,9 +55,13 @@ public class Interface extends JFrame {
         btnCadastrarFuncionario.addActionListener(e -> cadastrarFuncionario());
         botoes.add(btnCadastrarFuncionario);
 
-        JButton btnListarTodos = new JButton("Listar Clientes e Funcionários");
-        btnListarTodos.addActionListener(e -> listarPessoas());
-        botoes.add(btnListarTodos);
+        JButton btnListarClientes = new JButton("Listar Clientes");
+        btnListarClientes.addActionListener(e -> ListarClientes());
+        botoes.add(btnListarClientes);
+
+        JButton btnListarFuncionarios = new JButton("Listar Funcionários");
+        btnListarFuncionarios.addActionListener(e -> ListarFuncionarios());
+        botoes.add(btnListarFuncionarios);
 
         JButton btnAdicionarReserva = new JButton("Adicionar Reserva");
         btnAdicionarReserva.addActionListener(e -> adicionarReserva());
@@ -103,27 +110,26 @@ public class Interface extends JFrame {
         }
     }
 
-    private void listarPessoas(){
-        StringBuilder sb = new StringBuilder();
+    private void ListarClientes(){
+        StringBuilder ListaClientes = new StringBuilder("Clientes: \n");
 
-        for (Pessoa p : hotel.get_pessoas()){
-            p.exibir_informacoes();
+        for (Cliente c : hotel.get_clientes()){
+            ListaClientes.append(c.get_nome()).append(" - E-mail: ").append(c.get_email()).append(" - CPF: ").append(c.get_cpf());
+            c.exibir_informacoes();
 
-            sb.append(p.get_nome()).append(" - CPF: ").append(p.get_cpf());
-
-            if (p instanceof Cliente){
-            Cliente c = (Cliente) p;
-            sb.append(" - Email: ").append(c.get_email());
-            }
-
-            else if (p instanceof Funcionario){
-                Funcionario f = (Funcionario) p;
-                sb.append(" - Cargo: ").append(f.get_cargo());
-            }
-
-            sb.append("\n");
         }
-        JOptionPane.showMessageDialog(this, sb.toString()); 
+        JOptionPane.showMessageDialog(this, ListaClientes.toString());
+    }
+
+    private void ListarFuncionarios(){
+        StringBuilder ListaFuncionarios = new StringBuilder("Funcionários: \n");
+
+        for (Funcionario f : hotel.get_funcionarios()){
+            ListaFuncionarios.append(f.get_nome()).append(" - Cargo: ").append(f.get_cargo()).append(" - Salário: ").append(f.get_salario()).append(" - CPF: ").append(f.get_cpf());
+            f.exibir_informacoes();
+        
+        }
+        JOptionPane.showMessageDialog(this, ListaFuncionarios.toString());
     }
 
     private void adicionarReserva() {
