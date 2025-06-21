@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class Interface extends JFrame {
@@ -60,7 +63,7 @@ public class Interface extends JFrame {
         btnListarFuncionarios.addActionListener(e -> ListarFuncionarios());
         botoes.add(btnListarFuncionarios);  
 
-        JButton btnMudarOcupacao = new JButton("Mudar Ocupação do Quarto: ");
+        JButton btnMudarOcupacao = new JButton("Mudar Ocupação do Quarto");
         btnMudarOcupacao.addActionListener(e -> MudarOcupacao());
         botoes.add(btnMudarOcupacao);
 
@@ -230,6 +233,28 @@ public class Interface extends JFrame {
         JOptionPane.showMessageDialog(this, sb.toString());
     }
 
+    private void carregarClientes(String caminho){
+        try (BufferedReader br = new BufferedReader(new FileReader(caminho))){
+            String linha;
+
+            while ((linha = br.readLine()) != null){
+                String[] partes = linha.split(";");
+
+                if (partes.length == 3){
+                    String nome = partes[0];
+                    String cpf = partes[1];
+                    String email = partes[2];
+
+                    Cliente c = new Cliente(nome, cpf, email);
+                    hotel.add_cliente(c);
+                }
+            }
+        }
+
+        catch(IOException e){
+            JOptionPane.showMessageDialog(this, "Erro ao carregar clientes..." + e.getMessage());
+        }
+    }
 
     public static void main(String[] args){
         new Interface();
