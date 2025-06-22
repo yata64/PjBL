@@ -16,30 +16,10 @@ public class Interface extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        for (int i = 1; i <= 15; i++){
-        hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIVRE));
-        }
-
-        for (int i = 16; i <= 30; i++){
-            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIVRE));
-        }
-
-        for (int i = 31; i <= 35; i++){
-            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.MANUTENCAO));
-        }
-
-        for (int i = 36; i <= 40; i++){
-            hotel.add_quarto(new Quarto(i, "Simples", 2, 100, Quarto.ocupacao.LIMPEZA));
-        }
-
-        for (int i = 41; i <= 45; i++){
-            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.MANUTENCAO));
-        }
-
-        for (int i = 46; i <= 50; i++){
-            hotel.add_quarto(new Quarto(i, "Suíte", 4, 350, Quarto.ocupacao.LIMPEZA));
-        }
-
+        carregarClientes();
+        carregarFuncionarios();
+        carregarQuartos();
+        carregarReservas();
 
         JPanel painel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
