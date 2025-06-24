@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class Interface extends JFrame {
     private Hotel hotel = new Hotel("Hotel Central", "Av. Principal, 120");
@@ -153,57 +154,63 @@ public class Interface extends JFrame {
         }        
     }
 
-    private void adicionarReserva() {
-        if (hotel.get_clientes().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Cadastre pelo menos um cliente antes de fazer a reserva.");
+    private void adicionarReserva(){
+        if(hotel.get_clientes().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Cadastre pelo menos um cliente antes de fazer uma reserva");
             return;
-    }
+        }
 
-        StringBuilder quartosLivres = new StringBuilder("Quartos Livres:\n");
-        for (Quarto q : hotel.quartos_livres()){
+        StringBuilder quartosLivres = new StringBuilder("Quartos livres: ");
+
+        for(Quarto q : hotel.quartos_livres()){
             quartosLivres.append("Quarto ").append(q.get_numero()).append("\n");
         }
 
-        if (quartosLivres.length() == 0){
-            JOptionPane.showMessageDialog(this, "Sem quartos disponíveis.");
+        if(hotel.quartos_livres().isEmpty()){
+            JOptionPane.showMessageDialog(this, "Sem quartos disponíveis. ");
             return;
         }
 
         String[] nomesClientes = hotel.get_clientes().stream().map(Cliente::get_nome).toArray(String[]::new);
-        String nomeSelecionado = (String)JOptionPane.showInputDialog(this, "Selecione o cliente:","Clientes", JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
-
-        if (nomeSelecionado == null) 
-            return;
-
-            Cliente clienteSelecionado = hotel.get_clientes().stream().filter(c -> c.get_nome().equals(nomeSelecionado)).findFirst().orElse(null);
-
-        if (clienteSelecionado == null){
-            JOptionPane.showMessageDialog(this, "Cliente não encontrado.");
+        String nomeSelecinado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente: ", "Clientes",JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
+        
+        if(nomeSelecinado == null){
             return;
         }
 
-        String numStr = JOptionPane.showInputDialog(this, quartosLivres + "\nDigite o número do quarto para reservar:");
+        Cliente clienteSelecionado = hotel.get_clientes().stream().filter(c -> c.get_nome().equals(nomeSelecionado)).findFirst().orElse(null);
+        String num = JOptionPane.showInputDialog(this, quartosLivres + "\n Digite o quarto que deseja reservar: ");
+        
         try{
-            int numero = Integer.parseInt(numStr);
+            if(clienteSelecionado == null){
+                throw new ReservaInvalida("Cliente não encontrado...");
+            }
+
+            int numero = Integer.parseInt(num);
             Quarto q = hotel.buscar_quarto(numero);
-            if (q != null && q.get_ocupacao() == Quarto.ocupacao.LIVRE){
-                q.set_ocupacao(Quarto.ocupacao.OCUPADO);
-                Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(),clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
-                hotel.add_reserva(r);
-                JOptionPane.showMessageDialog(this, "Reserva feita para " + clienteSelecionado.get_nome() + " no quarto " + numero);
+
+            if(q == null || q.get_ocupacao() != Quarto.ocupacao.LIVRE){
+                throw new ReservaInvalida("Quarto inválido ou ocupado.");
             }
 
-            else{
-                JOptionPane.showMessageDialog(this, "Quarto inválido ou já ocupado.");
-            }
-        } 
+            q.set_ocupacao(Quarto.ocupacao.OCUPADO);
+            Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(), clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
 
-        catch (NumberFormatException e){
-            JOptionPane.showMessageDialog(this, "Entrada inválida.");
+            hotel.add_reserva(r);
+
+            JOptionPane.showConfirmDialog(this, "Reserva feita para " + clienteSelecionado.get_nome() + "no quarto " + numero);
         }
+
+        catch(ReservaInvalida e){
+            JOptionPane.showMessageDialog(this, "ERROR " + e.getMessage());
+        }
+
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this, "Número do quarto inválido...");
+        }
+
     }
-
-
+    
     private void verQuartos(){
         StringBuilder sb = new StringBuilder();
 
