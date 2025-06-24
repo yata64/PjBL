@@ -106,7 +106,7 @@ public class Interface extends JFrame {
         StringBuilder ListaClientes = new StringBuilder("Clientes: \n");
 
         for (Cliente c : hotel.get_clientes()){
-            ListaClientes.append(c.get_nome()).append(" - E-mail: ").append(c.get_email()).append(" - CPF: ").append(c.get_cpf());
+            ListaClientes.append(c.get_identificar());
             c.exibir_informacoes();
 
         }
@@ -117,7 +117,7 @@ public class Interface extends JFrame {
         StringBuilder ListaFuncionarios = new StringBuilder("Funcionários: \n");
 
         for (Funcionario f : hotel.get_funcionarios()){
-            ListaFuncionarios.append(f.get_nome()).append(" - Cargo: ").append(f.get_cargo()).append(" - Salário: ").append(f.get_salario()).append(" - CPF: ").append(f.get_cpf());
+            ListaFuncionarios.append(f.get_identificar());
             f.exibir_informacoes();
         
         }
@@ -172,9 +172,9 @@ public class Interface extends JFrame {
         }
 
         String[] nomesClientes = hotel.get_clientes().stream().map(Cliente::get_nome).toArray(String[]::new);
-        String nomeSelecinado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente: ", "Clientes",JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
+        String nomeSelecionado = (String) JOptionPane.showInputDialog(this, "Selecione o cliente: ", "Clientes",JOptionPane.QUESTION_MESSAGE, null, nomesClientes, nomesClientes[0]);
         
-        if(nomeSelecinado == null){
+        if(nomeSelecionado == null){
             return;
         }
 

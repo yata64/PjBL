@@ -13,7 +13,7 @@ public class Cliente extends Pessoa{
 
     @Override
     public String get_identificar(){
-        return "Cliente: " + nome + " CPF: " + cpf;
+        return "Cliente: " + nome + " - E-Mail: " + email + "- CPF: " + cpf;
     }
 
     public String get_email(){
