@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class Interface extends JFrame {
     private Hotel hotel = new Hotel("Hotel Central", "Av. Principal, 120");
@@ -216,15 +215,41 @@ public class Interface extends JFrame {
 
         for (Quarto.ocupacao estado : Quarto.ocupacao.values()){
             sb.append("Quartos em ").append(estado.name()).append(":\n");
+
             for (Quarto q : hotel.get_quartos()){
                 if (q.get_ocupacao() == estado){
                     sb.append("Quarto ").append(q.get_numero()).append(" - Tipo: ").append(q.get_tipo()).append(" - Capacidade: ").append(q.get_capacidade()).append(" - Diária: R$ ").append(q.get_diaria()).append("\n");
+                    
+                    if(estado == Quarto.ocupacao.OCUPADO){
+                        String ocupante = buscarOcupante(q.get_numero());
+                        
+                        if(ocupante != null){
+                            sb.append(" - Ocupado por: ").append(ocupante);
+                        }
+
+                        else{
+                            sb.append("Ocupado por [desconhecido]");
+                        }
+                    }
                 }
+
+                sb.append("\n");
             }
+
             sb.append("\n");
         }
 
         JOptionPane.showMessageDialog(this, sb.toString());
+    }
+
+    private String buscarOcupante(int numeroQuarto){
+        for(Reserva r : hotel.get_reservas()){
+            if(r.get_numero() == numeroQuarto){
+                return r.get_cliente();
+            }
+        }
+
+        return null;
     }
 
     private void carregarClientes(){
