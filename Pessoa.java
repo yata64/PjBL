@@ -16,4 +16,8 @@ public abstract class Pessoa{
     public String get_cpf(){
         return cpf;
     }
+
+    public String get_identificar(){
+        return "Pessoa: " + nome;
+    }
 }

@@ -11,7 +11,12 @@ public class Cliente extends Pessoa{
         System.out.println("Cliente: " + nome + "E-mail: " + email);
     }
 
+    @Override
+    public String get_identificar(){
+        return "Cliente: " + nome + " CPF: " + cpf;
+    }
+
     public String get_email(){
         return email;
-    }
+    }  
 }

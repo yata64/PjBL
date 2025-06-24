@@ -20,4 +20,9 @@ public class Funcionario extends Pessoa{
     public void exibir_informacoes(){
         System.out.println("Funcionário: " + nome + "Cargo: " + cargo + "Salário: " + salario);
     }
+
+    @Override
+    public String get_identificar(){
+        return "Funcionário: " + nome + " Cargo: " + cargo;
+    }
 }
