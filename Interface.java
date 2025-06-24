@@ -193,7 +193,7 @@ public class Interface extends JFrame {
             }
 
             q.set_ocupacao(Quarto.ocupacao.OCUPADO);
-            Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(), clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2));
+            Reserva r = new Reserva(hotel.get_reservas().size() + 1, q.get_tipo(), q.get_diaria(), clienteSelecionado.get_nome(), LocalDate.now(), LocalDate.now().plusDays(2), q.get_numero());
 
             hotel.add_reserva(r);
 
@@ -212,40 +212,61 @@ public class Interface extends JFrame {
     
     private void verQuartos(){
         StringBuilder sb = new StringBuilder();
+        boolean encontrarQuarto = false;
 
         for (Quarto.ocupacao estado : Quarto.ocupacao.values()){
-            sb.append("Quartos em ").append(estado.name()).append(":\n");
+            boolean encontrarEstado = false;
+            StringBuilder blocos = new StringBuilder();
 
             for (Quarto q : hotel.get_quartos()){
                 if (q.get_ocupacao() == estado){
-                    sb.append("Quarto ").append(q.get_numero()).append(" - Tipo: ").append(q.get_tipo()).append(" - Capacidade: ").append(q.get_capacidade()).append(" - Diária: R$ ").append(q.get_diaria()).append("\n");
+                    encontrarEstado = true;
+                    encontrarQuarto = true;
+
+                    blocos.append("Quarto ").append(q.get_numero()).append(" - Tipo: ").append(q.get_tipo()).append(" - Capacidade: ").append(q.get_capacidade()).append(" - Diária: R$ ").append(q.get_diaria()).append("\n");
                     
                     if(estado == Quarto.ocupacao.OCUPADO){
                         String ocupante = buscarOcupante(q.get_numero());
                         
                         if(ocupante != null){
-                            sb.append(" - Ocupado por: ").append(ocupante);
+                            blocos.append(" - Ocupado por: ").append(ocupante).append("\n");
                         }
 
                         else{
-                            sb.append("Ocupado por [desconhecido]");
+                            blocos.append("Ocupado por [desconhecido]").append("\n");
                         }
                     }
+                    blocos.append("\n");
                 }
-
-                sb.append("\n");
             }
 
-            sb.append("\n");
+            if(encontrarEstado){
+                sb.append("Quartos em ").append(estado.name()).append(": \n");
+                sb.append(blocos).append("\n");
+            }
         }
 
-        JOptionPane.showMessageDialog(this, sb.toString());
+        if(!encontrarQuarto){
+            sb.append("Nenhum quarto cadastrado... \n");
+        }
+        
+        JTextArea textArea = new JTextArea(sb.toString(), 20, 50);
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setEditable(false);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        JOptionPane.showMessageDialog(this, scrollPane, "Lista de Quartos", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private String buscarOcupante(int numeroQuarto){
+        LocalDate hoje = LocalDate.now();
+
         for(Reserva r : hotel.get_reservas()){
-            if(r.get_numero() == numeroQuarto){
-                return r.get_cliente();
+            if(r.get_numQuarto() == numeroQuarto){
+                if(!hoje.isBefore(r.get_entrada()) && !hoje.isAfter(r.get_saida())){
+                    return r.get_cliente() + " (Entrada: " + r.get_entrada() + " - Saída: " + r.get_saida() + ")";
+                }
             }
         }
 
@@ -339,15 +360,16 @@ public class Interface extends JFrame {
             while((linha = br.readLine()) != null){
                 String[] partes = linha.split(";");
 
-                if(partes.length == 7){
+                if(partes.length == 8){
                     int numero = Integer.parseInt(partes[0]);
                     String tipo = partes[1];
                     float preco = Float.parseFloat(partes[2]);
                     String cliente = partes[4];
                     LocalDate dataEntrada = LocalDate.parse(partes[5]);
                     LocalDate dataSaida = LocalDate.parse(partes[6]);
+                    int numQuarto = Integer.parseInt(partes[7]);
 
-                    Reserva r = new Reserva(numero, tipo, preco, cliente, dataEntrada, dataSaida);
+                    Reserva r = new Reserva(numero, tipo, preco, cliente, dataEntrada, dataSaida, numQuarto);
                     hotel.add_reserva(r);
                 }
             }

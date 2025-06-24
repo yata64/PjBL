@@ -23,6 +23,6 @@ public class Funcionario extends Pessoa{
 
     @Override
     public String get_identificar(){
-        return "Funcionário: " + nome + " - CPF: " + cpf + " - Cargo: " + cargo + " - Sálario: " + salario;
+        return "Funcionário: " + nome + " - CPF: " + cpf + " - Cargo: " + cargo + " - Sálario: " + salario + "\n";
     }
 }

@@ -7,18 +7,24 @@ public class Reserva{
     private String cliente;
     private LocalDate dataEntrada;
     private LocalDate dataSaida;
+    private int numQuarto;
 
-    public Reserva(int numero, String tipo, float preco, String cliente, LocalDate entrada, LocalDate saida){
+    public Reserva(int numero, String tipo, float preco, String cliente, LocalDate entrada, LocalDate saida, int numQuarto){
         this.numero = numero;
         this.tipo = tipo;
         this.preco = preco;
         this.cliente = cliente;
         this.dataEntrada = entrada;
         this.dataSaida = saida;
+        this.numQuarto = numQuarto;
     }
 
     public int get_numero(){
         return numero;
+    }
+
+    public int get_numQuarto(){
+        return numQuarto;
     }
 
     public String get_tipo(){
